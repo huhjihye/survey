@@ -16,7 +16,7 @@ def force_scroll_to_top():
         <script>
             const section = window.parent.document.querySelector('section.main');
             if (section) {
-                section.scrollTo({top: 0, behavior: 'instant'});
+                section.scrollTo({top: 0, behavior: 'smooth'});
             }
         </script>
     """, height=0)
@@ -529,35 +529,26 @@ def nav_buttons():
     move = None
 
     with col1:
-        if st.button("이전"):
+        if st.button("이전", on_click=force_scroll_to_top):
             move = "prev"
+
     with col2:
         if st.session_state.page == len(pages) - 1:
-            if st.button("제출"):
+            if st.button("제출", on_click=force_scroll_to_top):
                 st.success("제출이 완료되었습니다! 감사합니다.")
                 st.session_state.page = 0
-                st.session_state.scroll_to_top = True
                 st.rerun()
         else:
-            if st.button("다음"):
+            if st.button("다음", on_click=force_scroll_to_top):
                 move = "next"
 
-    # 버튼 클릭 후 이동 처리
     if move == "prev":
         st.session_state.page = max(st.session_state.page - 1, 0)
-        st.session_state.scroll_to_top = True
         st.rerun()
     elif move == "next":
         st.session_state.page = min(st.session_state.page + 1, len(pages) - 1)
-        st.session_state.scroll_to_top = True
         st.rerun()
-
 # --- 페이지 실행 ---
 pages = [page_intro, page_q4, page_q5, page_q68, page_survey_info]
-
-#  이동 직후 강제 스크롤
-if st.session_state.get("scroll_to_top", False):
-    force_scroll_to_top()
-    st.session_state.scroll_to_top = False  # 초기화
 
 pages[st.session_state.page]()
