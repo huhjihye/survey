@@ -10,7 +10,7 @@ if "page" not in st.session_state:
 scale_labels_5 = ["① 매우 그렇지 않음", "② 그렇지 않음", "③ 보통", "④ 그렇다", "⑤ 매우 그렇다"]
 scale_labels_7 = ["① 매우 그렇지 않음", "② 그렇지 않음", "③ 약간 그렇지 않음", "④ 보통이다", "⑤ 약간 그렇다", "⑥ 그렇다", "⑦ 매우 그렇다"]
 
-# --- 최상단 이동 함수 ---
+
 def force_scroll_to_top():
     html("""
         <script>
@@ -20,6 +20,7 @@ def force_scroll_to_top():
             }
         </script>
     """, height=0)
+
 
 # --- 페이지 함수들 ---
 
@@ -348,7 +349,7 @@ def page_q68():
     for idx, q in enumerate(question_list_7(), start=1):
         st.markdown(
             f"""
-            <h4 style="font-size: 1.5em; font-weight: bold; margin-bottom: 0.2em; margin-top: 0.5em;">
+            <h4 style="font-size: 1.0em; font-weight: bold; margin-bottom: 0.2em; margin-top: 0.5em;">
                 {q}
             </h4>
             """,
@@ -364,7 +365,7 @@ def page_q68():
     st.markdown("<hr>", unsafe_allow_html=True)
 
     st.markdown("""
-    <h4 style="font-size: 1.0em; font-weight: bold; margin-bottom: 0.5em;">
+    <h4 style="font-size: 1.5em; font-weight: bold; margin-bottom: 0.5em;">
     8. 다음을 읽고 답변해주세요 
     </h4>
     """, unsafe_allow_html=True)
@@ -522,20 +523,20 @@ def page_survey_info():
             st.success("제출이 완료되었습니다! 감사합니다.")
             st.session_state.page = 0
 
-# --- 네비게이션 버튼 통합 함수 ---
+# --- 페이지 이동 관리 ---
 def nav_buttons():
     col1, col2 = st.columns(2)
-    move = None  # 이동 방향 저장
+    move = None
 
     with col1:
         if st.button("이전"):
             move = "prev"
-
     with col2:
         if st.session_state.page == len(pages) - 1:
             if st.button("제출"):
                 st.success("제출이 완료되었습니다! 감사합니다.")
                 st.session_state.page = 0
+                st.session_state.scroll_to_top = True
                 st.rerun()
         else:
             if st.button("다음"):
@@ -544,11 +545,19 @@ def nav_buttons():
     # 버튼 클릭 후 이동 처리
     if move == "prev":
         st.session_state.page = max(st.session_state.page - 1, 0)
+        st.session_state.scroll_to_top = True
         st.rerun()
     elif move == "next":
         st.session_state.page = min(st.session_state.page + 1, len(pages) - 1)
+        st.session_state.scroll_to_top = True
         st.rerun()
 
-# --- 페이지 매핑 및 실행 ---
+# --- 페이지 실행 ---
 pages = [page_intro, page_q4, page_q5, page_q68, page_survey_info]
+
+#  이동 직후 강제 스크롤
+if st.session_state.get("scroll_to_top", False):
+    force_scroll_to_top()
+    st.session_state.scroll_to_top = False  # 초기화
+
 pages[st.session_state.page]()
