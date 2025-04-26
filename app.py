@@ -12,11 +12,19 @@ scale_labels_7 = ["① 매우 그렇지 않음", "② 그렇지 않음", "③ �
 
 
 def force_scroll_to_top():
-    st.scroll_to('top')
+    html("""
+        <script>
+            var element = window.parent.document.getElementById("top");
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        </script>
+    """, height=0)
 
 # --- 페이지 함수들 ---
 
 def page_intro():
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     force_scroll_to_top()
     st.markdown(
         """
@@ -123,6 +131,7 @@ def page_intro():
     nav_buttons()
 
 def page_q4():
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     force_scroll_to_top()
     st.markdown(
         """
@@ -246,6 +255,7 @@ def page_q4():
     nav_buttons()
 
 def page_q5():
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     force_scroll_to_top()
     st.markdown(
         """
@@ -298,6 +308,7 @@ def page_q5():
     nav_buttons()
 
 def page_q68():
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     force_scroll_to_top()
     
     st.markdown("""
@@ -393,6 +404,7 @@ def page_q68():
     nav_buttons()
 
 def page_survey_info():
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     force_scroll_to_top()
     
     st.markdown(
