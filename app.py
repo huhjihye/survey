@@ -5,6 +5,8 @@ from question_list import *  #질문 리스트
 # --- 세션 초기화 ---
 if "page" not in st.session_state:
     st.session_state.page = 0
+if "scroll_top" not in st.session_state:
+    st.session_state.scroll_top = False
 
 # --- 척도 옵션 ---
 scale_labels_5 = ["① 매우 그렇지 않음", "② 그렇지 않음", "③ 보통", "④ 그렇다", "⑤ 매우 그렇다"]
@@ -513,15 +515,7 @@ def page_survey_info():
         key="income",
         label_visibility="collapsed"
     )
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("이전"):
-            st.session_state.page = max(st.session_state.page - 1, 0)
-
-    with col2:
-        if st.button("제출"):
-            st.success("제출이 완료되었습니다! 감사합니다.")
-            st.session_state.page = 0
+    nav_buttons()
 
 # --- 페이지 이동 관리 ---
 def nav_buttons():
@@ -529,26 +523,33 @@ def nav_buttons():
     move = None
 
     with col1:
-        if st.button("이전", on_click=force_scroll_to_top):
+        if st.button("이전"):
             move = "prev"
 
     with col2:
         if st.session_state.page == len(pages) - 1:
-            if st.button("제출", on_click=force_scroll_to_top):
+            if st.button("제출"):
                 st.success("제출이 완료되었습니다! 감사합니다.")
                 st.session_state.page = 0
                 st.rerun()
         else:
-            if st.button("다음", on_click=force_scroll_to_top):
+            if st.button("다음"):
                 move = "next"
 
     if move == "prev":
         st.session_state.page = max(st.session_state.page - 1, 0)
+        st.session_state.scroll_top = True  # <<< 추가
         st.rerun()
     elif move == "next":
         st.session_state.page = min(st.session_state.page + 1, len(pages) - 1)
+        st.session_state.scroll_top = True  # <<< 추가
         st.rerun()
 # --- 페이지 실행 ---
 pages = [page_intro, page_q4, page_q5, page_q68, page_survey_info]
 
-pages[st.session_state.page]()
+pages[st.session_state.page]()  # 현재 페이지 실행
+
+# 페이지 이동 후 스크롤 최상단
+if st.session_state.scroll_top:
+    force_scroll_to_top()
+    st.session_state.scroll_top = False
