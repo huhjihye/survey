@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit.components.v1 import html
-from question_list import *  # 너가 만든 질문 리스트 불러오는 파일
+from question_list import *  #질문 리스트
 
 # --- 세션 초기화 ---
 if "page" not in st.session_state:
